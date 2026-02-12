@@ -1,0 +1,243 @@
+### Variables
+@baseUrl = http://localhost:3000
+@ideaId = 1
+@analysisId = 1
+@projectId = 1
+
+########################################
+# IDEAS - Gestion des idées
+########################################
+
+### 1. Créer une nouvelle idée
+POST {{baseUrl}}/ideas
+Content-Type: application/json
+
+{
+  "title": "Application de suivi budgétaire",
+  "description": "Une application mobile pour gérer ses finances personnelles avec des graphiques et des alertes"
+}
+
+### 2. Créer une autre idée
+POST {{baseUrl}}/ideas
+Content-Type: application/json
+
+{
+  "title": "Plateforme de covoiturage écologique",
+  "description": "Service de covoiturage qui calcule et compense l'empreinte carbone des trajets"
+}
+
+### 3. Lister toutes les idées
+GET {{baseUrl}}/ideas
+
+### 4. Récupérer une idée par ID
+GET {{baseUrl}}/ideas/{{ideaId}}
+
+### 5. Mettre à jour une idée
+PATCH {{baseUrl}}/ideas/{{ideaId}}
+Content-Type: application/json
+
+{
+  "title": "Application de suivi budgétaire personnel",
+  "description": "Une application mobile intelligente pour gérer ses finances avec IA et prédictions"
+}
+
+### 6. Supprimer une idée
+DELETE {{baseUrl}}/ideas/3
+
+### 7. Marquer une idée comme convertie (en projet)
+POST {{baseUrl}}/ideas/{{ideaId}}/convert
+
+########################################
+# ANALYSIS - Analyse des idées
+########################################
+
+### 8. Créer une analyse pour une idée
+POST {{baseUrl}}/analysis
+Content-Type: application/json
+
+{
+  "ideaId": 1,
+  "problem": "Les gens ont du mal à suivre leurs dépenses et n'ont pas de visibilité sur leur budget mensuel",
+  "solution": "Application mobile avec synchronisation bancaire automatique, catégorisation intelligente des dépenses et alertes personnalisées",
+  "targetAudience": "Jeunes actifs 25-40 ans, familles, freelances",
+  "feasibility": "Techniquement faisable avec APIs bancaires existantes (PSD2). Besoins: développeur mobile, backend, designer UX",
+  "viabilityScore": 8
+}
+
+### 9. Créer une autre analyse
+POST {{baseUrl}}/analysis
+Content-Type: application/json
+
+{
+  "ideaId": 2,
+  "problem": "Le covoiturage actuel ne prend pas en compte l'impact environnemental",
+  "solution": "Plateforme qui calcule les émissions CO2 économisées et propose la compensation carbone automatique",
+  "targetAudience": "Éco-responsables, trajets domicile-travail, événements",
+  "feasibility": "APIs de calcul carbone disponibles. Partenariats avec projets de reforestation nécessaires",
+  "viabilityScore": 6
+}
+
+### 10. Récupérer l'analyse d'une idée
+GET {{baseUrl}}/analysis/idea/{{ideaId}}
+
+### 11. Mettre à jour une analyse
+PATCH {{baseUrl}}/analysis/{{analysisId}}
+Content-Type: application/json
+
+{
+  "viabilityScore": 9,
+  "feasibility": "Très faisable - APIs Plaid, Salt Edge disponibles. MVP possible en 3 mois"
+}
+
+### 12. Supprimer une analyse
+DELETE {{baseUrl}}/analysis/2
+
+########################################
+# PROJECTS - Gestion des projets
+########################################
+
+### 13. Convertir une idée en projet
+POST {{baseUrl}}/projects
+Content-Type: application/json
+
+{
+  "ideaId": 1
+}
+
+### 14. Lister tous les projets
+GET {{baseUrl}}/projects
+
+### 15. Récupérer un projet par ID
+GET {{baseUrl}}/projects/{{projectId}}
+
+### 16. Mettre à jour le statut d'un projet - EN_COURS
+PATCH {{baseUrl}}/projects/{{projectId}}
+Content-Type: application/json
+
+{
+  "status": "EN_COURS"
+}
+
+### 17. Mettre à jour le statut - REALISE
+PATCH {{baseUrl}}/projects/{{projectId}}
+Content-Type: application/json
+
+{
+  "status": "REALISE"
+}
+
+### 18. Mettre à jour le statut - COMMERCIALISE
+PATCH {{baseUrl}}/projects/{{projectId}}
+Content-Type: application/json
+
+{
+  "status": "COMMERCIALISE"
+}
+
+### 19. Mettre à jour le statut - ABANDONNE
+PATCH {{baseUrl}}/projects/{{projectId}}
+Content-Type: application/json
+
+{
+  "status": "ABANDONNE"
+}
+
+### 20. Supprimer un projet
+DELETE {{baseUrl}}/projects/2
+
+########################################
+# SCÉNARIOS DE TEST
+########################################
+
+### Scénario complet : Idée → Analyse → Projet
+
+# Étape 1 : Créer une idée
+POST {{baseUrl}}/ideas
+Content-Type: application/json
+
+{
+  "title": "Bot de jardinage intelligent",
+  "description": "Assistant virtuel qui guide les utilisateurs dans l'entretien de leur jardin selon la météo et la saison"
+}
+
+###
+
+# Étape 2 : Analyser l'idée (utilisez l'ID retourné ci-dessus)
+POST {{baseUrl}}/analysis
+Content-Type: application/json
+
+{
+  "ideaId": 3,
+  "problem": "Les jardiniers amateurs ne savent pas quand arroser, tailler ou planter",
+  "solution": "Bot conversationnel + notifications basées sur météo locale et calendrier de jardinage",
+  "targetAudience": "Propriétaires avec jardin, débutants en jardinage, 30-60 ans",
+  "feasibility": "APIs météo disponibles (OpenWeather). Base de données botanique nécessaire. Chatbot avec GPT",
+  "viabilityScore": 7
+}
+
+###
+
+# Étape 3 : Convertir en projet
+POST {{baseUrl}}/projects
+Content-Type: application/json
+
+{
+  "ideaId": 3
+}
+
+###
+
+# Étape 4 : Vérifier que l'idée est marquée comme convertie
+GET {{baseUrl}}/ideas/3
+
+###
+
+# Étape 5 : Mettre à jour le projet
+PATCH {{baseUrl}}/projects/1
+Content-Type: application/json
+
+{
+  "status": "EN_COURS"
+}
+
+########################################
+# TESTS D'ERREURS
+########################################
+
+### Test : Créer une idée sans titre (doit échouer)
+POST {{baseUrl}}/ideas
+Content-Type: application/json
+
+{
+  "description": "Description sans titre"
+}
+
+### Test : Créer une analyse pour une idée inexistante (doit échouer)
+POST {{baseUrl}}/analysis
+Content-Type: application/json
+
+{
+  "ideaId": 9999,
+  "problem": "Test",
+  "solution": "Test"
+}
+
+### Test : Récupérer une idée inexistante (doit échouer)
+GET {{baseUrl}}/ideas/9999
+
+### Test : Statut de projet invalide (doit échouer)
+PATCH {{baseUrl}}/projects/1
+Content-Type: application/json
+
+{
+  "status": "STATUT_INVALIDE"
+}
+
+### Test : Score de viabilité hors limites (doit échouer)
+POST {{baseUrl}}/analysis
+Content-Type: application/json
+
+{
+  "ideaId": 1,
+  "viabilityScore": 15
+}
