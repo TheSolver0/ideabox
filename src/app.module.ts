@@ -5,6 +5,8 @@ import { AppService } from './app.service';
 import { IdeasModule } from './ideas/ideas.module';
 import { AnalysisModule } from './analysis/analysis.module';
 import { ProjectsModule } from './projects/projects.module'
+import { Project } from './projects/entities/project.entity';
+import { Idea } from './ideas/entities/idea.entity';
 
 @Module({
   imports: [
@@ -15,6 +17,7 @@ import { ProjectsModule } from './projects/projects.module'
       autoLoadEntities: true,
       synchronize: true,
     }),
+    TypeOrmModule.forFeature([Project, Idea]),
     IdeasModule,
     AnalysisModule,
     ProjectsModule,

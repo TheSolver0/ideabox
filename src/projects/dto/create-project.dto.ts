@@ -1,7 +1,15 @@
-import { IsNotEmpty, IsNumber } from 'class-validator';
+import { IsArray, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateProjectDto {
   @IsNotEmpty()
-  @IsNumber()
-  ideaId: number;
+  @IsString()
+  title: string;
+
+  @IsNotEmpty()
+  @IsString()
+  description: string;
+
+  @IsOptional()
+  @IsArray()
+  ideaIds?: number[];
 }

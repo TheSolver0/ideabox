@@ -1,5 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToOne } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToOne, OneToMany, JoinColumn, ManyToOne } from 'typeorm';
 import { Analysis } from '../../analysis/entities/analysis.entity';
+import { Project } from 'src/projects/entities/project.entity';
 
 export enum IdeaStatus {
   IDEA = 'idea',
@@ -24,8 +25,15 @@ export class Idea {
   })
   status: IdeaStatus;
 
-  @OneToOne(() => Analysis, analysis => analysis.idea, { nullable: true })
-  analysis: Analysis;
+  @OneToMany(() => Analysis, analysis => analysis.idea, { cascade: true })
+  analysis: Analysis[];
+
+  @Column({ nullable: true })
+  projectId: number | null;
+
+  @ManyToOne(() => Project, project => project.ideas, { nullable: true, onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'projectId' })
+  project: Project;
 
   @CreateDateColumn()
   createdAt: Date;

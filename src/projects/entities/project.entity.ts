@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Idea } from 'src/ideas/entities/idea.entity';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 
 export enum ProjectStatus {
   EN_COURS = 'EN_COURS',
@@ -13,9 +14,6 @@ export class Project {
   id: number;
 
   @Column()
-  ideaId: number;
-
-  @Column()
   title: string;
 
   @Column('text')
@@ -27,6 +25,10 @@ export class Project {
     default: ProjectStatus.EN_COURS
   })
   status: ProjectStatus;
+
+  @OneToMany(() => Idea, idea => idea.project)
+  ideas: Idea[];
+
 
   @CreateDateColumn()
   createdAt: Date;

@@ -38,8 +38,23 @@ export class IdeasService {
   }
 
   async update(id: number, updateIdeaDto: UpdateIdeaDto): Promise<Idea> {
-    await this.findOne(id); // Vérifie l'existence
-    await this.ideasRepository.update(id, updateIdeaDto);
+    const idea = await this.findOne(id);
+    
+    // Assigner les propriétés manuellement pour gérer le null
+    if (updateIdeaDto.title !== undefined) {
+      idea.title = updateIdeaDto.title;
+    }
+    if (updateIdeaDto.description !== undefined) {
+      idea.description = updateIdeaDto.description;
+    }
+    if (updateIdeaDto.status !== undefined) {
+      idea.status = updateIdeaDto.status;
+    }
+    if (updateIdeaDto.projectId !== undefined) {
+      idea.projectId = updateIdeaDto.projectId;
+    }
+    
+    await this.ideasRepository.save(idea);
     return this.findOne(id);
   }
 

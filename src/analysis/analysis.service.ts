@@ -22,25 +22,30 @@ export class AnalysisService {
       throw new NotFoundException(`Idée #${createAnalysisDto.ideaId} non trouvée`);
     }
 
-    // Vérifier qu'il n'y a pas déjà une analyse
-    const existingAnalysis = await this.analysisRepository.findOneBy({ ideaId: createAnalysisDto.ideaId });
-    if (existingAnalysis) {
-      throw new BadRequestException(`Une analyse existe déjà pour l'idée #${createAnalysisDto.ideaId}`);
-    }
-
     const analysis = this.analysisRepository.create(createAnalysisDto);
     return this.analysisRepository.save(analysis);
   }
 
+  async findAllByIdeaId(ideaId: number): Promise<Analysis[]> {
+     return this.analysisRepository.find({
+      where: { ideaId },
+      order: { createdAt: 'ASC' }
+    });
+  }
+
   async findByIdeaId(ideaId: number): Promise<Analysis> {
-    const analysis = await this.analysisRepository.findOneBy({ ideaId });
+    const analysis = await this.analysisRepository.findOne({
+      where: { ideaId },
+      order: { createdAt: 'DESC' }
+    }); 
     if (!analysis) {
-      throw new NotFoundException(`Aucune analyse pour l'idée #${ideaId}`);
+      throw new NotFoundException(`Analyse pour l'idée #${ideaId} non trouvée`);
     }
     return analysis;
   }
 
-  async update(id: number, updateAnalysisDto: UpdateAnalysisDto): Promise<Analysis> {
+
+   async update(id: number, updateAnalysisDto: UpdateAnalysisDto): Promise<Analysis> {
     const analysis = await this.analysisRepository.findOneBy({ id });
     if (!analysis) {
       throw new NotFoundException(`Analyse #${id} non trouvée`);

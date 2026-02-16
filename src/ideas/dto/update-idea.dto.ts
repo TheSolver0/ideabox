@@ -1,4 +1,4 @@
-import { IsEnum, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsOptional, IsString, IsNumber } from 'class-validator';
 import { IdeaStatus } from '../entities/idea.entity';
 
 export class UpdateIdeaDto {
@@ -13,4 +13,8 @@ export class UpdateIdeaDto {
   @IsOptional()
   @IsEnum(IdeaStatus)
   status?: IdeaStatus;
+
+  @IsOptional()
+  @IsNumber() 
+  projectId?: number | null;
 }

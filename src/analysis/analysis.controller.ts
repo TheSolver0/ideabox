@@ -13,8 +13,13 @@ export class AnalysisController {
   }
 
   @Get('idea/:ideaId')
-  findByIdeaId(@Param('ideaId') ideaId: string) {
-    return this.analysisService.findByIdeaId(+ideaId);
+findByIdeaId(@Param('ideaId') ideaId: string) {
+  return this.analysisService.findByIdeaId(+ideaId);
+}
+
+  @Get('idea/:ideaId')
+  findAllByIdeaId(@Param('ideaId') ideaId: string) {
+    return this.analysisService.findAllByIdeaId(+ideaId);
   }
 
   @Patch(':id')

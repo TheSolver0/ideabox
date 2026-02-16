@@ -5,25 +5,17 @@ export class CreateAnalysisDto {
   @IsNumber()
   ideaId: number;
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
-  problem?: string;
+  axisName: string;
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
-  solution?: string;
-
-  @IsOptional()
-  @IsString()
-  targetAudience?: string;
-
-  @IsOptional()
-  @IsString()
-  feasibility?: string;
+  content: string;
 
   @IsOptional()
   @IsNumber()
   @Min(1)
   @Max(10)
-  viabilityScore?: number;
+  score?: number;
 }
