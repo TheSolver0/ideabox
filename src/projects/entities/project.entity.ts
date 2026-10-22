@@ -1,11 +1,19 @@
-import { Idea } from 'src/ideas/entities/idea.entity';
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { Idea } from '../../ideas/entities/idea.entity';
 
 export enum ProjectStatus {
+  PREVU = 'PREVU',
   EN_COURS = 'EN_COURS',
-  REALISE = 'REALISE',
-  COMMERCIALISE = 'COMMERCIALISE',
-  ABANDONNE = 'ABANDONNE'
+  LANCE_REALISE = 'LANCE_REALISE',
+  EN_PAUSE = 'EN_PAUSE',
+  ABANDONNE = 'ABANDONNE',
 }
 
 @Entity('projects')
@@ -13,22 +21,26 @@ export class Project {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column({ type: 'int', nullable: true })
+  ownerId: number | null;
+
   @Column()
   title: string;
 
-  @Column('text')
+  @Column('text', { default: '' })
   description: string;
 
-  @Column({
-    type: 'varchar',
-    enum: ProjectStatus,
-    default: ProjectStatus.EN_COURS
-  })
+  @Column({ type: 'varchar', default: ProjectStatus.PREVU })
   status: ProjectStatus;
 
-  @OneToMany(() => Idea, idea => idea.project)
-  ideas: Idea[];
+  @Column('text', { default: '' })
+  nextAction: string;
 
+  @Column({ default: false })
+  isCommercialized: boolean;
+
+  @OneToMany(() => Idea, (idea) => idea.project)
+  ideas: Idea[];
 
   @CreateDateColumn()
   createdAt: Date;

@@ -1,20 +1,21 @@
-import { IsEnum, IsOptional, IsString, IsNumber } from 'class-validator';
-import { IdeaStatus } from '../entities/idea.entity';
+import {
+  IsBoolean,
+  IsEnum,
+  IsInt,
+  IsOptional,
+  IsString,
+  MinLength,
+} from 'class-validator';
+import { IdeaPriority, IdeaStatus } from '../entities/idea.entity';
 
 export class UpdateIdeaDto {
-  @IsOptional()
-  @IsString()
-  title?: string;
-
-  @IsOptional()
-  @IsString()
-  description?: string;
-
-  @IsOptional()
-  @IsEnum(IdeaStatus)
-  status?: IdeaStatus;
-
-  @IsOptional()
-  @IsNumber() 
-  projectId?: number | null;
+  @IsOptional() @IsString() @MinLength(3) title?: string;
+  @IsOptional() @IsString() description?: string;
+  @IsOptional() @IsString() problem?: string;
+  @IsOptional() @IsString() targetAudience?: string;
+  @IsOptional() @IsEnum(IdeaStatus) status?: IdeaStatus;
+  @IsOptional() @IsEnum(IdeaPriority) priority?: IdeaPriority;
+  @IsOptional() @IsBoolean() focus?: boolean;
+  @IsOptional() @IsString() nextAction?: string;
+  @IsOptional() @IsInt() projectId?: number | null;
 }

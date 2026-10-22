@@ -1,20 +1,17 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
+import { HistoryService } from '../history/history.service';
 import { IdeasController } from './ideas.controller';
 import { IdeasService } from './ideas.service';
 
 describe('IdeasController', () => {
-  let controller: IdeasController;
-
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
+  it('is defined with its collaborators', async () => {
+    const module = await Test.createTestingModule({
       controllers: [IdeasController],
-      providers: [IdeasService],
+      providers: [
+        { provide: IdeasService, useValue: {} },
+        { provide: HistoryService, useValue: {} },
+      ],
     }).compile();
-
-    controller = module.get<IdeasController>(IdeasController);
-  });
-
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
+    expect(module.get(IdeasController)).toBeDefined();
   });
 });

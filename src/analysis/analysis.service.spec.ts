@@ -1,18 +1,7 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { AnalysisService } from './analysis.service';
 
 describe('AnalysisService', () => {
-  let service: AnalysisService;
-
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [AnalysisService],
-    }).compile();
-
-    service = module.get<AnalysisService>(AnalysisService);
-  });
-
-  it('should be defined', () => {
-    expect(service).toBeDefined();
+  it('is defined with repository and data source collaborators', () => {
+    expect(new AnalysisService({} as never, {} as never)).toBeDefined();
   });
 });

@@ -1,4 +1,12 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn, CreateDateColumn, ManyToOne } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { Idea } from '../../ideas/entities/idea.entity';
 
 @Entity('analysis')
@@ -6,22 +14,28 @@ export class Analysis {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ nullable: true })
+  @Column({ type: 'int', nullable: true })
+  ownerId: number | null;
+
+  @Column()
   ideaId: number;
 
-  @ManyToOne(() => Idea,idea => idea.analysis, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Idea, (idea) => idea.analysis, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'ideaId' })
   idea: Idea;
 
   @Column()
-  axisName: string; // "Problème", "Solution", "Marché", etc.
+  title: string;
 
   @Column('text')
   content: string;
 
-  @Column({ type: 'int', nullable: true })
-  score: number;
+  @Column({ type: 'datetime', nullable: true })
+  archivedAt: Date | null;
 
   @CreateDateColumn()
   createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

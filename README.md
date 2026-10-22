@@ -1,98 +1,55 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# IdeaBox personnel
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+API NestJS/TypeORM utilisant SQLite. Le frontend statique se trouve dans le dossier voisin `ideabox front`.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Configuration locale
 
-## Description
+Copier `.env.example` vers `.env`, puis remplacer les valeurs d'exemple. Ne jamais versionner `.env`.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Variables principales :
 
-## Project setup
+- `IDEABOX_DB_PATH` : chemin du fichier SQLite ;
+- `AUTH_JWT_SECRET` : secret aléatoire long utilisé pour signer les jetons ;
+- `AUTH_TOKEN_TTL_SECONDS` : durée du jeton court (3600 par défaut) ;
+- `CORS_ORIGINS` : origines frontend autorisées, séparées par des virgules ;
+- `OWNER_EMAIL` et `OWNER_PASSWORD` : utilisés uniquement par la commande d'initialisation du propriétaire.
 
-```bash
-$ npm install
+## Initialisation et lancement
+
+```powershell
+npm.cmd install
+npm.cmd run migration:run
+npm.cmd run owner:init
+npm.cmd run start:dev
 ```
 
-## Compile and run the project
+La commande `owner:init` crée le compte unique, ou renouvelle son mot de passe si le même compte existe. Elle rattache également au propriétaire les données importées avant sa création.
 
-```bash
-# development
-$ npm run start
+Servir ensuite `ideabox front` sur `http://localhost:8081`. Par défaut, le frontend contacte l'API locale sur `http://localhost:3001`. Pour un autre environnement, définir `window.IDEABOX_CONFIG.apiUrl` avant le chargement de `config.js`.
 
-# watch mode
-$ npm run start:dev
+## Docker Compose
 
-# production mode
-$ npm run start:prod
+Créer `ideabox/.env` à partir de `.env.example` et remplacer au minimum `AUTH_JWT_SECRET` par une valeur aléatoire longue. Le port hôte de l'API est `3001` par défaut afin de ne pas entrer en conflit avec une autre application utilisant le port 3000.
+
+```powershell
+docker compose up -d --build
+docker compose exec api npm run migration:run
+docker compose exec api npm run owner:init
 ```
 
-## Run tests
+Le port reste `3000` dans le conteneur. Pour choisir un autre port hôte, définir `IDEABOX_API_PORT` dans `.env` et aligner `window.IDEABOX_CONFIG.apiUrl` côté frontend.
 
-```bash
-# unit tests
-$ npm run test
+## Import initial destructif local
 
-# e2e tests
-$ npm run test:e2e
+Cette commande sauvegarde d'abord le fichier SQLite dans `db/backups/`, conserve le compte propriétaire, puis remplace transactionnellement les seules données métier :
 
-# test coverage
-$ npm run test:cov
+```powershell
+$env:CONFIRM_LOCAL_RESET='RESET_IDEABOX_LOCAL'
+npm.cmd run data:reset-import
 ```
 
-## Deployment
+Elle refuse de s'exécuter avec `NODE_ENV=production` et ne se lance jamais automatiquement.
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+## Hébergement avec persistance
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Monter un volume persistant sur le dossier contenant `IDEABOX_DB_PATH`, fournir les secrets par l'environnement, définir `CORS_ORIGINS` avec l'origine HTTPS réelle et exécuter les migrations explicitement avant le démarrage. Une seule instance d'API écrivant dans SQLite est recommandée. Le dépôt ne déploie ni serveur ni synchronisation distante.
