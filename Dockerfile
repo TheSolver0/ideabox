@@ -13,9 +13,13 @@ RUN apt-get update \
 
 # Code source
 COPY . .
+RUN npm run build
 
-# Port NestJS
+# Configuration d'execution
+ENV NODE_ENV=production
+
+# Port local par defaut. Render fournit dynamiquement PORT au demarrage.
 EXPOSE 3000
 
-# Mode dev avec hot reload
-CMD ["npm", "run", "start:dev"]
+# Demarrage du JavaScript deja compile, sans watcher de developpement.
+CMD ["npm", "run", "start:prod"]
